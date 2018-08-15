@@ -1,3 +1,5 @@
-5 /tmp/var 40
-6 /tmp/log 30
-7 /tmp/tmp 30
+5 /var 25
+6 /var/log 25
+7 /var/log/audit 15
+8 /home 25
+9 /tmp 5
