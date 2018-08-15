@@ -19,8 +19,7 @@ while IFS= read -r var; do
 	partition=$(echo $var | cut -d' ' -f2)
 
 	# Partition Size
-	size_mbytes=$(echo print "$total_size * ($size_percent / 100)" | perl)
-	size_mbytes=$(echo ${size_mbytes%.*})
+	size_mbytes=$(expr $size_percent \* $total_size / 100)
 	
 	## Logical partitions
 	fdisk_command="$fdisk_command
@@ -58,6 +57,7 @@ done < $cfg
 
 # Mount
 echo "Mounting partitions"
+#mount -a
 
 while IFS= read -r var; do
         partition=$(echo $var | cut -d' ' -f2)
