@@ -1,6 +1,6 @@
 #!/bin/bash
 
-disk=/dev/xvdf
+disk=/dev/xvdb
 cfg=scheme.txt
 
 total_size=$((`blockdev --getsize64 $disk` / 1024000))
@@ -27,12 +27,14 @@ while IFS= read -r var; do
 	n
 	l
 
-	+${size_mbytes}M"
+	+${size_mbytes}M
+"
 done < $cfg
 
 fdisk_command="$fdisk_command
 
-w"
+w
+"
 
 # Apply the partition
 echo "Applying partition scheme"
@@ -52,9 +54,15 @@ while IFS= read -r var; do
         # FSTAB
 	echo "Adding $partition to fstab"
 	echo "$disk$partition_number $partition ext4 defaults 0 2" >> /etc/fstab
-	
 done < $cfg
 
 # Mount
 echo "Mounting partitions"
-mount -a
+
+while IFS= read -r var; do
+        partition=$(echo $var | cut -d' ' -f2)
+        partition_number=$(echo $var | cut -d' ' -f1)
+
+	install -d $partition
+	mount $disk$partition_number $partition
+done < $cfg
