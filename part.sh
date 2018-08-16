@@ -3,6 +3,15 @@
 disk=/dev/xvdb
 cfg=scheme.txt
 
+diskname=$(echo $disk|cut -d/ -f3)
+totalPartitions=$(grep -c "$diskname[0-9]" /proc/partitions)
+
+if [ $totalPartitions -gt 0 ]
+then
+        echo "Already partitioned disk. Not formatting"
+        exit
+fi
+
 total_size=$((`blockdev --getsize64 $disk` / 1024000))
 
 # Build the fdisk command text
@@ -57,7 +66,6 @@ done < $cfg
 
 # Mount
 echo "Mounting partitions"
-#mount -a
 
 while IFS= read -r var; do
         partition=$(echo $var | cut -d' ' -f2)
