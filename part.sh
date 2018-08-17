@@ -8,19 +8,15 @@ totalPartitions=$(grep -c "$diskname[0-9]" /proc/partitions)
 
 if [ $totalPartitions -gt 0 ]
 then
-        echo "Already partitioned disk. Not formatting"
+        echo "Already partitioned disk. Exiting"
         exit
 fi
 
 total_size=$((`blockdev --getsize64 $disk` / 1024000))
 
 # Build the fdisk command text
-fdisk_command="n
-e
-
-
-
-"
+# Create the extended partition
+fdisk_command="echo n; echo e; echo; echo; echo;"
 
 while IFS= read -r var; do
 	# Prep
@@ -31,26 +27,18 @@ while IFS= read -r var; do
 	size_mbytes=$(expr $size_percent \* $total_size / 100)
 	
 	## Logical partitions
-	fdisk_command="$fdisk_command
-	n
-	l
-
-	+${size_mbytes}M
-"
+	fdisk_command+="echo n; echo l; echo; echo +${size_mbytes}M; echo;"
 done < $cfg
 
-fdisk_command="$fdisk_command
-
-w
-"
+# Exit and save fdisk
+fdisk_command+="echo; echo w"
 
 # Apply the partition
 echo "Applying partition scheme"
-echo "$fdisk_command" | fdisk $disk
+eval $fdisk_command | fdisk $disk
 
 # Do other tasks
 while IFS= read -r var; do
-
 	# Prep
 	partition=$(echo $var | cut -d' ' -f2)
 	partition_number=$(echo $var | cut -d' ' -f1)
@@ -66,7 +54,6 @@ done < $cfg
 
 # Mount
 echo "Mounting partitions"
-
 while IFS= read -r var; do
         partition=$(echo $var | cut -d' ' -f2)
         partition_number=$(echo $var | cut -d' ' -f1)
