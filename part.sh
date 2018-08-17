@@ -61,3 +61,5 @@ while IFS= read -r var; do
 	install -d $partition
 	mount $disk$partition_number $partition
 done < $cfg
+
+sleep 2
