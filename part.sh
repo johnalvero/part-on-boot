@@ -78,9 +78,9 @@ rsync -a --include '*/' --exclude '*' /var-tmp/ /var/
 rsync -a /home-tmp/ /home/
 
 # Restore context
-chcon -t var_t /var
-chcon -t var_log_t /var/log
-chcon -t auditd_log_t /var/log/audit
+restorecon -Rv /home
+restorecon -Rv /var
+restorecon -Rv /tmp
 
 # Cleanup
 rm -rf /var-tmp
