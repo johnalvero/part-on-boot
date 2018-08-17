@@ -37,7 +37,10 @@ fdisk_command+="echo; echo w"
 echo "Applying partition scheme"
 eval $fdisk_command | fdisk $disk
 
+sleep 2
+
 # Do other tasks
+# Add to fstab
 while IFS= read -r var; do
 	# Prep
 	partition=$(echo $var | cut -d' ' -f2)
@@ -52,6 +55,14 @@ while IFS= read -r var; do
 	echo "$disk$partition_number $partition ext4 defaults 0 2" >> /etc/fstab
 done < $cfg
 
+# Copy first before mounting
+install -d /var-tmp
+rsync -a --include '*/' --exclude '*' /var/ /var-tmp
+
+install -d /home-tmp
+rsync -a /home/ /home-tmp
+
+
 # Mount
 echo "Mounting partitions"
 while IFS= read -r var; do
@@ -62,4 +73,15 @@ while IFS= read -r var; do
 	mount $disk$partition_number $partition
 done < $cfg
 
-sleep 2
+# restore files
+rsync -a --include '*/' --exclude '*' /var-tmp/ /var/
+rsync -a /home-tmp/ /home/
+
+# Restore context
+chcon -t var_t /var
+chcon -t var_log_t /var/log
+chcon -t auditd_log_t /var/log/audit
+
+# Cleanup
+rm -rf /var-tmp
+rm -rf /home-tmp
