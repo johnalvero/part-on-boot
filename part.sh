@@ -1,7 +1,14 @@
 #!/bin/bash
 
-disk=/dev/xvdb
 cfg=scheme.txt
+
+if ! [ -b "$1" ]
+then
+        echo "Not a block device. Exiting"
+        exit
+fi
+
+disk=$1
 
 diskname=$(echo $disk|cut -d/ -f3)
 totalPartitions=$(grep -c "$diskname[0-9]" /proc/partitions)
