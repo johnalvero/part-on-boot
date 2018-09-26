@@ -62,12 +62,12 @@ while IFS= read -r var; do
 	echo "$disk$partition_number $partition ext4 defaults 0 2" >> /etc/fstab
 done < $cfg
 
-# Copy first before mounting
+# Backup first before mounting
 install -d /var-tmp
-rsync -a --include '*/' --exclude '*' /var/ /var-tmp
+rsync -a /var/* /var-tmp/
 
 install -d /home-tmp
-rsync -a /home/ /home-tmp
+rsync -a /home/* /home-tmp/
 
 
 # Mount
@@ -81,8 +81,8 @@ while IFS= read -r var; do
 done < $cfg
 
 # restore files
-rsync -a --include '*/' --exclude '*' /var-tmp/ /var/
-rsync -a /home-tmp/ /home/
+rsync -a /var-tmp/* /var/
+rsync -a /home-tmp/* /home/
 
 # Restore context
 restorecon -Rv /home
