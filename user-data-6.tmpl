@@ -1,0 +1,10 @@
+#cloud-config
+
+# order boothook, bootcmd, runcmd
+
+runcmd:
+ - /bin/mkdir /bootscripts
+ - /bin/echo '_part_' | $(which base64) -d | $(which gzip) -d > /bootscripts/part && chmod +x /bootscripts/part
+ - /bin/echo '_scheme_' | $(which base64) -d | $(which gzip) -d > /bootscripts/scheme.txt
+ - cd  /bootscripts && ./part /dev/xvdb
+ - /bin/rm -rf /bootscripts ; /sbin/reboot
