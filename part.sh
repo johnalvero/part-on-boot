@@ -23,7 +23,7 @@ total_size=$((`blockdev --getsize64 $disk` / 1024000))
 
 # Build the fdisk command text
 # Create the extended partition
-fdisk_command="echo n; echo e; echo; echo; echo;"
+fdisk_command="echo n; echo e; echo 1; echo; echo;"
 
 while IFS= read -r var; do
 	# Prep
