@@ -4,7 +4,7 @@
 
 runcmd:
  - /bin/mkdir /bootscripts
- - /bin/echo '_part_' | /bin/base64 -d | /bin/gzip -d > /bootscripts/part && chmod +x /bootscripts/part
+ - /bin/echo '_part_' | $(which base64) -d | $(which gzip) -d > /bootscripts/part && chmod +x /bootscripts/part
  - /bin/echo '_scheme_' | /bin/base64 -d | /bin/gzip -d > /bootscripts/scheme.txt
  - cd  /bootscripts && ./part /dev/xvdb
  - /bin/echo 7 > /etc/yum/vars/releasever
