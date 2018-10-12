@@ -7,6 +7,5 @@ runcmd:
  - /bin/echo '_part_' | $(which base64) -d | $(which gzip) -d > /bootscripts/part && chmod +x /bootscripts/part
  - /bin/echo '_scheme_' | $(which base64) -d | $(which gzip) -d > /bootscripts/scheme.txt
  - cd  /bootscripts && ./part /dev/xvdb
- - /bin/echo 7 > /etc/yum/vars/releasever
  - /bin/systemctl unmask tmp.mount
  - /bin/rm -rf /bootscripts ; /sbin/reboot
